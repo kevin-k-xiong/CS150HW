@@ -1,3 +1,5 @@
+import java.util.NoSuchElementException;
+
 public class IntSinglyLinkedList {
 
     // Reference to the head/starting node
@@ -20,6 +22,10 @@ public class IntSinglyLinkedList {
         size++;
     }
 
+    /**
+     * 
+     * @param value
+     */
     public void addLast(int value) {
         // Create the next node
         Node nextNode = new Node(value, null);
@@ -37,9 +43,14 @@ public class IntSinglyLinkedList {
         size++;
     }
 
+    /**
+     * 
+     * @param index
+     * @return
+     */
     public int get(int index) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Error Index out of bounds");
+            throw new IndexOutOfBoundsException("Error: Index out of bounds.");
         }
 
         // Set current to head
@@ -55,19 +66,71 @@ public class IntSinglyLinkedList {
 
     }
 
+    /**
+     * 
+     * @return
+     */
     public int removeFirst() {
-
+        if (head == null || size == 0) {
+            throw new NoSuchElementException("Error: Element does not exist.");
+        }
+        int temp = head.getValue();
+        head = head.getNext();
+        size--;
+        return temp;
     }
 
+    /**
+     * 
+     * @param value
+     * @return
+     */
     public boolean removeValue(int value) {
+        if (head == null || size == 0) {
+            return false;
+        }
 
+        // If value matches a value in list and its the first node then call removeFirst
+        if (value == head.getValue()) {
+            removeFirst();
+            return true;
+        }
+
+        Node previous = head;
+        Node current = head.getNext();
+
+        while (current != null) {
+            if (current.getValue() == value) {
+                previous.setNext(current.getNext());
+                size--;
+                return true;
+            }
+            previous = current;
+            current = current.getNext();
+
+        }
+
+        return false;
     }
 
+    /**
+     * 
+     * @return the size of the list
+     */
     public int size() {
-
+        return size;
     }
 
+    /**
+     * 
+     * @return true if empty and false if not empty
+     */
     public boolean isEmpty() {
+        if (head == null || size == 0) {
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
