@@ -6,14 +6,18 @@ public class IntSinglyLinkedList {
     private Node head;
     private int size;
 
+    /**
+     * Constructs an empty list.
+     */
     public IntSinglyLinkedList() {
         head = null;
         size = 0;
     }
 
     /**
-     * 
-     * @param value
+     * Inserts a value at the front of the list.
+     *
+     * @param value the value to add
      */
     public void addFirst(int value) {
         // Create the first node
@@ -23,8 +27,9 @@ public class IntSinglyLinkedList {
     }
 
     /**
-     * 
-     * @param value
+     * Inserts a value at the end of the list.
+     *
+     * @param value the value to add
      */
     public void addLast(int value) {
         // Create the next node
@@ -44,9 +49,11 @@ public class IntSinglyLinkedList {
     }
 
     /**
-     * 
-     * @param index
-     * @return
+     * Returns the value at the given index.
+     *
+     * @param index the position to read
+     * @return the value at the index
+     * @throws IndexOutOfBoundsException if index is out of range
      */
     public int get(int index) {
         if (index < 0 || index >= size) {
@@ -67,8 +74,10 @@ public class IntSinglyLinkedList {
     }
 
     /**
-     * 
-     * @return
+     * Removes and returns the first value in the list.
+     *
+     * @return the removed value
+     * @throws NoSuchElementException if the list is empty
      */
     public int removeFirst() {
         if (head == null || size == 0) {
@@ -81,9 +90,10 @@ public class IntSinglyLinkedList {
     }
 
     /**
-     * 
-     * @param value
-     * @return
+     * Removes the first node with the given value.
+     *
+     * @param value the value to remove
+     * @return true if a node was removed, false otherwise
      */
     public boolean removeValue(int value) {
         if (head == null || size == 0) {
@@ -114,16 +124,18 @@ public class IntSinglyLinkedList {
     }
 
     /**
-     * 
-     * @return the size of the list
+     * Returns the number of elements in the list.
+     *
+     * @return the list size
      */
     public int size() {
         return size;
     }
 
     /**
-     * 
-     * @return true if empty and false if not empty
+     * Returns whether the list is empty.
+     *
+     * @return true if empty, false otherwise
      */
     public boolean isEmpty() {
         if (head == null || size == 0) {
@@ -134,6 +146,11 @@ public class IntSinglyLinkedList {
 
     }
 
+    /**
+     * Returns a string representation of the list.
+     *
+     * @return the list in the form [a,b,c]
+     */
     public String toString() {
         StringBuilder sb = new StringBuilder("[");
 
