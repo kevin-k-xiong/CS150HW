@@ -135,6 +135,25 @@ public class IntSinglyLinkedList {
     }
 
     public String toString() {
+        StringBuilder sb = new StringBuilder("[");
 
+        if (head == null || size == 0) {
+            sb.append("]");
+            return sb.toString();
+        }
+
+        Node current = head;
+
+        while (current != null) {
+            if (current != head) {
+                sb.append(",");
+            }
+            sb.append(current.getValue());
+            current = current.getNext();
+        }
+
+        sb.append("]");
+
+        return sb.toString();
     }
 }
