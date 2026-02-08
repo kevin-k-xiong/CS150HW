@@ -20,7 +20,7 @@ public class Main {
     /**
      * Prints the list contents and its size on one line.
      *
-     * @param linkList the list to display
+     * @param linkList the list to displ ay
      */
     public static void printHelper(IntSinglyLinkedList linkList) {
         System.out.println(linkList + " size: " + linkList.size());

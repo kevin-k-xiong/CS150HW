@@ -1,5 +1,13 @@
 public class Library {
 
+    private ArrayList<Book> catalog = new ArrayList<>();
+
+    private HashMap<String, Book> byIsbn = new HashMap<>();
+
+    private HashSet<Book> isAvailable = new HashSet<>();
+
+    private HashMap<Borrower, LinkedList<Book>> borrowerBooks = new HashMap<>();
+
     public void addBook(Book book) {
 
     }

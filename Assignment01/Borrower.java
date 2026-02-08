@@ -18,4 +18,26 @@ public class Borrower {
         this.name = name;
     }
 
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Borrower)) {
+            return false;
+        }
+
+        Borrower other = (Borrower) o;
+
+        if (this.id.equals(other.getId())) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
