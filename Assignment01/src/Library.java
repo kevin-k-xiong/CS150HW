@@ -1,14 +1,29 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+
 public class Library {
 
     private ArrayList<Book> catalog = new ArrayList<>();
 
     private HashMap<String, Book> byIsbn = new HashMap<>();
 
-    private HashSet<Book> isAvailable = new HashSet<>();
+    private HashSet<Book> available = new HashSet<>();
 
     private HashMap<Borrower, LinkedList<Book>> borrowerBooks = new HashMap<>();
 
     public void addBook(Book book) {
+        if (book == null) {
+            throw new IllegalArgumentException("Error: Invalid Input");
+        }
+        if (findByIsbn(book.getIsbn()) != null) {
+            return;
+        }
+
+        catalog.add(book);
+        byIsbn.put(book.getIsbn(), book);
+        available.add(book);
 
     }
 
