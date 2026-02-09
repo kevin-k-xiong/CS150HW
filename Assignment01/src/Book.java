@@ -87,7 +87,7 @@ public class Book {
      */
     private void isValid(String s) {
         if (s == null || s.trim().isEmpty()) {
-            throw new IllegalArgumentException("Error: Invalid Input");
+            throw new IllegalArgumentException();
         }
     }
 }
