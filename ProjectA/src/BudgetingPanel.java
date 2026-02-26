@@ -9,13 +9,13 @@ public class BudgetingPanel extends JPanel {
 
     public BudgetingPanel() {
         setLayout(new BorderLayout()); // Control layout
-        topPanel();
+        budgetingTopPanel();
     }
 
-    public void topPanel() {
+    public void budgetingTopPanel() {
         tPanel = new JPanel();
         tPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        changeBtn = new JButton("Add/Change Budget");
+        changeBtn = new JButton("Add/Modify Budget");
         tPanel.add(changeBtn);
 
         add(tPanel, BorderLayout.NORTH);
