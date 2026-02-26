@@ -1,0 +1,11 @@
+public enum Category {
+    FOOD,
+    ENTERTAINMENT,
+    TRANSPORTATION,
+    UTILITIES,
+    HOUSING,
+    PERSONAL_CARE,
+    MISCELLANEOUS,
+    CLOTHES,
+    ELECTRONICS
+}
