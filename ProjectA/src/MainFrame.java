@@ -15,9 +15,9 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        mainPanel.add(new Spending(), "Spending");
-        mainPanel.add(new Budgeting(), "Budget");
-        mainPanel.add(new Settings(), "Settings");
+        mainPanel.add(new SpendingPanel(), "Spending");
+        mainPanel.add(new BudgetingPanel(), "Budget");
+        mainPanel.add(new SettingsPanel(), "Settings");
 
         add(mainPanel, BorderLayout.CENTER);
         add(new Navigation(cardLayout, mainPanel), BorderLayout.SOUTH);

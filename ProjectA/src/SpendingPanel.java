@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Settings extends JPanel {
+public class SpendingPanel extends JPanel {
 
 }
