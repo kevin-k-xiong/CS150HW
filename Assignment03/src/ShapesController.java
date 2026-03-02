@@ -37,7 +37,9 @@ public class ShapesController {
      * Starts the app behavior with one shape and active animation.
      */
     public void start() {
-        model.addRandomShape();
+        for (int i = 0; i < 10; i++) {
+            model.addRandomShape();
+        }
         view.show();
         timer.start();
     }
