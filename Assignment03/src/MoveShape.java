@@ -1,10 +1,15 @@
 public class MoveShape {
-    private int x;
-    private int y;
-
-    public MoveShape(int x, int y) {
-        this.x = x;
-        this.y = y;
+    /**
+     * Moves the given shape by the provided deltas.
+     *
+     * @param shape shape to move
+     * @param dx    horizontal delta
+     * @param dy    vertical delta
+     */
+    public void move(Shape shape, int dx, int dy) {
+        if (shape == null) {
+            return;
+        }
+        shape.move(dx, dy);
     }
-
 }
