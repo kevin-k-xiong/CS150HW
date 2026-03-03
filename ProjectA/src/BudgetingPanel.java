@@ -72,7 +72,7 @@ public class BudgetingPanel extends JPanel {
             if (budgetItems.getSelectedValue() != null) {
                 catalog.dispose();
             }
-
+            // TODO: use selectedCategory (save/update budget, etc.)
         });
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
