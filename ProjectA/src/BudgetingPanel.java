@@ -1,5 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 public class BudgetingPanel extends JPanel {
 
@@ -8,12 +9,11 @@ public class BudgetingPanel extends JPanel {
     private JPanel tPanel;
     private JList<String> budgetItems;
     private JDialog catalog;
-    private JList list;
+    private JButton selectBtn;
 
     public BudgetingPanel() {
         setLayout(new BorderLayout()); // Control layout
         budgetingTopPanel();
-        displayBudget();
     }
 
     public void budgetingTopPanel() {
@@ -29,6 +29,21 @@ public class BudgetingPanel extends JPanel {
 
     public void displayBudget() {
 
+    }
+
+    public void addOrModify() {
+        Window mainFrame = SwingUtilities.getWindowAncestor(this);
+        catalog = new JDialog(mainFrame, "Choose a Catagory", Dialog.ModalityType.APPLICATION_MODAL);
+        catalog.setLayout(new BorderLayout());
+        catalog.getContentPane().removeAll();
+        catagoryList();
+        catalog.pack(); // or pack()
+        catalog.setLocationRelativeTo(this);
+        catalog.setVisible(true);
+
+    }
+
+    public void catagoryList() { // Fix so that catagorylisdt shows pn when the user presses the add butotn
         DefaultListModel<String> listModel = new DefaultListModel<>();
         listModel.addElement("Housing");
         listModel.addElement("Food");
@@ -43,21 +58,27 @@ public class BudgetingPanel extends JPanel {
         budgetList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         budgetList.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        add(budgetList, BorderLayout.CENTER);
+        catalog.add(budgetList, BorderLayout.CENTER);
+        addSelectBtn();
 
     }
 
-    public void addOrModify() {
-        Window mainFrame = SwingUtilities.getWindowAncestor(this);
-        catalog = new JDialog(mainFrame, "Choose a Catagory", Dialog.ModalityType.APPLICATION_MODAL);
-        catalog.setSize(300, 200); // or pack()
-        catalog.setLocationRelativeTo(this);
-        catalog.setVisible(true);
+    // Get it so the select buttn actually chooses the selection.
+    public void addSelectBtn() {
+        selectBtn = new JButton("Select");
 
-    }
+        selectBtn.addActionListener(e -> {
+            String selectedCategory = budgetItems.getSelectedValue();
+            if (budgetItems.getSelectedValue() != null) {
+                catalog.dispose();
+            }
 
-    public void catagoryList() {
-        list = new JList<>(Category.values());
+        });
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomPanel.add(selectBtn);
+
+        catalog.add(bottomPanel, BorderLayout.SOUTH);
     }
 
 }
