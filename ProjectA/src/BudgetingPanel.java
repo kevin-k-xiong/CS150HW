@@ -16,6 +16,9 @@ public class BudgetingPanel extends JPanel {
         budgetingTopPanel();
     }
 
+    /**
+     * Creates the modify button
+     */
     public void budgetingTopPanel() {
         tPanel = new JPanel();
         tPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -31,6 +34,9 @@ public class BudgetingPanel extends JPanel {
 
     }
 
+    /**
+     * Shows the window to modify the budget categories
+     */
     public void addOrModify() {
         Window mainFrame = SwingUtilities.getWindowAncestor(this);
         catalog = new JDialog(mainFrame, "Choose a Catagory", Dialog.ModalityType.APPLICATION_MODAL);
@@ -43,7 +49,10 @@ public class BudgetingPanel extends JPanel {
 
     }
 
-    public void catagoryList() { // Fix so that catagorylisdt shows pn when the user presses the add butotn
+    /**
+     * Shows the list of categories
+     */
+    public void catagoryList() {
         DefaultListModel<String> listModel = new DefaultListModel<>();
         listModel.addElement("Housing");
         listModel.addElement("Food");

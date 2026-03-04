@@ -13,6 +13,9 @@ public class SpendingPanel extends JPanel {
         spendingTopPanel();
     }
 
+    /**
+     * Adds the button to modify transaction
+     */
     public void spendingTopPanel() {
         tPanel = new JPanel();
         tPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -23,6 +26,9 @@ public class SpendingPanel extends JPanel {
         add(tPanel, BorderLayout.NORTH);
     }
 
+    /**
+     * 
+     */
     public void modifyTransaction() {
         Window mainFrame = SwingUtilities.getWindowAncestor(this);
         budgets = new JDialog(mainFrame, "Choose a Catagory", Dialog.ModalityType.APPLICATION_MODAL);
