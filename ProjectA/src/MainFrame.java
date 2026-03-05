@@ -6,6 +6,9 @@ public class MainFrame extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainPanel;
 
+    /**
+     * Builds the main app window, panel routing, and shared managers.
+     */
     public MainFrame() {
         setTitle("Budget App");
         setSize(720, 1280);
@@ -15,9 +18,13 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        mainPanel.add(new SpendingPanel(), "Spending");
-        mainPanel.add(new BudgetingPanel(), "Budget");
-        mainPanel.add(new SettingsPanel(), "Settings");
+        BudgetingManager budgetingManager = new BudgetingManager();
+        BudgetingPanel budgetingPanel = new BudgetingPanel(budgetingManager);
+        TransactionManager transactionManager = new TransactionManager(budgetingManager);
+        SpendingPanel spendingPanel = new SpendingPanel(transactionManager, budgetingPanel::displayBudget);
+
+        mainPanel.add(spendingPanel, "Spending");
+        mainPanel.add(budgetingPanel, "Budget");
 
         add(mainPanel, BorderLayout.CENTER);
         add(new Navigation(cardLayout, mainPanel), BorderLayout.SOUTH);

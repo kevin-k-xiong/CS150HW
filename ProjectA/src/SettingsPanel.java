@@ -1,6 +1,4 @@
 import javax.swing.*;
-import javax.swing.border.Border;
-
 import java.awt.*;
 
 public class SettingsPanel extends JPanel {
@@ -14,6 +12,9 @@ public class SettingsPanel extends JPanel {
     private JButton importBtn;
     private JDialog data;
 
+    /**
+     * Builds the settings screen actions.
+     */
     public SettingsPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         importExportBtn = new JButton("Import/Export");
@@ -27,6 +28,9 @@ public class SettingsPanel extends JPanel {
 
     }
 
+    /**
+     * Opens the import/export action dialog.
+     */
     public void importOrExport() {
         Window mainFrame = SwingUtilities.getWindowAncestor(this);
         data = new JDialog(mainFrame, "Import/Export", Dialog.ModalityType.APPLICATION_MODAL);
@@ -38,6 +42,9 @@ public class SettingsPanel extends JPanel {
         data.setVisible(true);
     }
 
+    /**
+     * Opens reset confirmation dialog.
+     */
     public void resetConfirmation() {
         Window mainFrame = SwingUtilities.getWindowAncestor(this);
         resetWindow = new JDialog(mainFrame, "Are You Sure?", Dialog.ModalityType.APPLICATION_MODAL);
@@ -49,6 +56,9 @@ public class SettingsPanel extends JPanel {
         resetWindow.setVisible(true);
     }
 
+    /**
+     * Adds reset confirmation buttons to the reset dialog.
+     */
     public void resetChoices() {
         confirmReset = new JButton("Yes");
         cancelReset = new JButton("No");
@@ -62,7 +72,9 @@ public class SettingsPanel extends JPanel {
 
     }
 
-    // Create the import/export
+    /**
+     * Adds import/export buttons to the data dialog.
+     */
     public void dataBtn() {
         importBtn = new JButton("Import Data");
         exportBtn = new JButton("Export Data");

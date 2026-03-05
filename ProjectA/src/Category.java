@@ -7,5 +7,6 @@ public enum Category {
     Personal_Care,
     Miscellaneous,
     Clothes,
-    Electronics
+    Electronics,
+    Savings
 }

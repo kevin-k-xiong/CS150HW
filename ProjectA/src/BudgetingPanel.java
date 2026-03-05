@@ -1,8 +1,17 @@
 import java.awt.*;
 import java.math.BigDecimal;
+import java.util.Map;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 public class BudgetingPanel extends JPanel {
+    private static final Color BG_MAIN = new Color(72, 78, 84);
+    private static final Color BG_TOP = new Color(60, 66, 72);
+    private static final Color BG_CARD = new Color(88, 95, 102);
+    private static final Color TEXT_PRIMARY = new Color(242, 244, 246);
+    private static final Color TEXT_SECONDARY = new Color(222, 226, 230);
 
     // Scroll container that holds the list of budget categories in the popup.
     private JScrollPane budgetList;
@@ -31,21 +40,36 @@ public class BudgetingPanel extends JPanel {
     // Small panel that groups the "Budget" label and amount text field.
     private JPanel amountInput;
 
-    BudgetingManager bManager = new BudgetingManager();
+    private final BudgetingManager bManager;
 
+    /**
+     * Creates a budgeting panel with its own manager instance.
+     */
     public BudgetingPanel() {
+        this(new BudgetingManager());
+    }
+
+    /**
+     * Creates a budgeting panel linked to a shared budgeting manager.
+     *
+     * @param budgetingManager manager used for budget persistence and summaries
+     */
+    public BudgetingPanel(BudgetingManager budgetingManager) {
+        this.bManager = budgetingManager;
         setLayout(new BorderLayout()); // Control layout
+        setBackground(BG_MAIN);
         budgetingTopPanel();
         budgetingLowerPanel();
 
     }
 
     /**
-     * Creates the modify button
+     * Creates the top toolbar and wires the add/modify action.
      */
     private void budgetingTopPanel() {
         tPanel = new JPanel();
         tPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        tPanel.setBackground(BG_TOP);
         changeBtn = new JButton("Add/Modify Budget");
         tPanel.add(changeBtn);
 
@@ -56,35 +80,58 @@ public class BudgetingPanel extends JPanel {
 
     }
 
+    /**
+     * Creates the lower scrollable area where budget cards are displayed.
+     */
     private void budgetingLowerPanel() {
         budgetDisplayPanel = new JPanel();
         budgetDisplayPanel.setLayout(new BoxLayout(budgetDisplayPanel, BoxLayout.Y_AXIS));
+        budgetDisplayPanel.setBorder(new EmptyBorder(8, 10, 8, 10));
+        budgetDisplayPanel.setBackground(BG_MAIN);
 
         JScrollPane displayScroll = new JScrollPane(budgetDisplayPanel);
+        displayScroll.getViewport().setBackground(BG_MAIN);
+        displayScroll.setBorder(BorderFactory.createEmptyBorder());
         displayBudget();
         add(displayScroll, BorderLayout.CENTER); // lower/main area of BudgetingPanel
     }
 
+    /**
+     * Rebuilds and redraws the budget summary list.
+     */
     public void displayBudget() {
         budgetDisplayPanel.removeAll();
 
         JLabel title = new JLabel("Budget Summary");
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
-        title.setAlignmentX(Component.CENTER_ALIGNMENT); // or RIGHT_ALIGNMENT
+        title.setForeground(TEXT_PRIMARY);
+        title.setAlignmentX(Component.LEFT_ALIGNMENT);
         budgetDisplayPanel.add(title);
         budgetDisplayPanel.add(Box.createVerticalStrut(8));
 
-        // Placeholder rows for now
-        JLabel row1 = new JLabel("Test1");
-        row1.setAlignmentX(Component.LEFT_ALIGNMENT);
-        budgetDisplayPanel.add(row1);
-
-        JLabel row2 = new JLabel("Test2");
-        row2.setAlignmentX(Component.LEFT_ALIGNMENT);
-        budgetDisplayPanel.add(row2);
+        displayHelper();
 
         budgetDisplayPanel.revalidate();
         budgetDisplayPanel.repaint();
+    }
+
+    /**
+     * Renders one card per category with limit, spent, and remaining amounts.
+     */
+    public void displayHelper() {
+        Map<Category, BigDecimal> allBudgets = bManager.getAllBudgets();
+
+        for (Map.Entry<Category, BigDecimal> entry : allBudgets.entrySet()) {
+            Category category = entry.getKey();
+            BigDecimal limit = entry.getValue();
+            BigDecimal spent = bManager.getSpent(category);
+            BigDecimal remaining = bManager.getRemaining(category);
+
+            JPanel card = createBudgetCard(category, limit, spent, remaining);
+            budgetDisplayPanel.add(card);
+            budgetDisplayPanel.add(Box.createVerticalStrut(8));
+        }
+
     }
 
     /**
@@ -95,6 +142,7 @@ public class BudgetingPanel extends JPanel {
         catalog = new JDialog(mainFrame, "Choose a Catagory", Dialog.ModalityType.APPLICATION_MODAL);
         catalog.setLayout(new BorderLayout());
         catalog.getContentPane().removeAll();
+        catalog.getContentPane().setBackground(BG_MAIN);
 
         catagoryList();
 
@@ -108,19 +156,15 @@ public class BudgetingPanel extends JPanel {
      * Shows the list of categories
      */
     public void catagoryList() {
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        listModel.addElement("Housing");
-        listModel.addElement("Food");
-        listModel.addElement("Transportation");
-        listModel.addElement("Utilities");
-        listModel.addElement("Savings");
-
-        budgetItems = new JList<>(listModel);
+        budgetItems = new JList<>(createCategoryListModel());
+        budgetItems.setBackground(BG_CARD);
+        budgetItems.setForeground(TEXT_PRIMARY);
 
         // User can select only one category at a time.
         budgetItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         budgetList = new JScrollPane(budgetItems);
+        budgetList.getViewport().setBackground(BG_CARD);
         budgetList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         budgetList.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -132,6 +176,9 @@ public class BudgetingPanel extends JPanel {
     }
 
     // Get it so the select buttn actually chooses the selection.
+    /**
+     * Creates the dialog submit button and wires validation/save behavior.
+     */
     private void addSelectBtn() {
         selectBtn = new JButton("Select");
 
@@ -149,6 +196,7 @@ public class BudgetingPanel extends JPanel {
         });
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomPanel.setBackground(BG_TOP);
         bottomPanel.add(selectBtn);
 
         catalog.add(bottomPanel, BorderLayout.SOUTH);
@@ -161,65 +209,39 @@ public class BudgetingPanel extends JPanel {
      * @param amountText       text entered for budget amount
      */
     private void checkIfValid(String selectedCategory, String amountText) {
-
-        // True only if user selected a category.
-        boolean hasCategory = selectedCategory != null;
-
-        // True only if amount text is not empty.
-        boolean hasText = !amountText.isEmpty();
-
-        // Parsed numeric amount
-        BigDecimal amountValue = null;
-
-        // Tracks whether amount text is a valid number.
-        boolean isNumeric = false;
-
-        // Tracks whether amount is non-negative.
-        boolean isNonNegative = false;
-
-        if (hasText) {
-            try {
-                // Attempt to parse amount text into BigDecimal.
-                amountValue = new BigDecimal(amountText);
-                isNumeric = true;
-
-                // True only if amount is greater than zero.
-                isNonNegative = amountValue.compareTo(BigDecimal.ZERO) > 0;
-            } catch (NumberFormatException ignored) {
-                // Parsing failed; keep isNumeric false.
-                isNumeric = false;
-            }
-        }
-
-        validaterCont(selectedCategory, amountText, hasCategory, hasText, isNumeric, isNonNegative);
-
+        BigDecimal amountValue = parsePositiveAmount(amountText);
+        validaterCont(selectedCategory, amountValue);
     }
 
-    private void validaterCont(String selectedCategory, String amountText, boolean hasCategory, boolean hasText,
-            boolean isNumeric, boolean isNonNegative) {
-
-        boolean isValid = hasCategory && hasText && isNumeric && isNonNegative;
-
-        // Close dialog only when all validation checks pass.
-        if (isValid) {
-
-            // Stores the value when valid
-            selectedCategory = budgetItems.getSelectedValue();
-
-            // Stores the value when valid
-            BigDecimal amountValue = new BigDecimal(amountText.trim());
-            Category enumCategory = bManager.toCategory(selectedCategory);
-            bManager.setBudget(enumCategory, amountValue);
-
-            // Closes the panel
-            catalog.dispose();
+    /**
+     * Finalizes budget save when validation succeeds.
+     *
+     * @param selectedCategory selected category text
+     * @param amountValue parsed amount, or {@code null} when invalid
+     */
+    private void validaterCont(String selectedCategory, BigDecimal amountValue) {
+        if (selectedCategory == null) {
+            showValidationMessage("Select a category.");
+            return;
+        }
+        if (amountValue == null) {
+            showValidationMessage("Enter a valid amount greater than 0.");
+            return;
         }
 
+        Category enumCategory = bManager.toCategory(selectedCategory);
+        bManager.setBudget(enumCategory, amountValue);
+        displayBudget();
+        catalog.dispose();
     }
 
+    /**
+     * Adds amount input controls to the budget dialog.
+     */
     private void enterBudget() {
         // Row at top of popup for budget amount input.
         amountInput = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        amountInput.setBackground(BG_TOP);
         amountInput.add(new JLabel("Enter a Budget"));
 
         // Text field where user types number (12 columns wide).
@@ -227,6 +249,98 @@ public class BudgetingPanel extends JPanel {
         amountInput.add(amount);
 
         catalog.add(amountInput, BorderLayout.NORTH);
+    }
+
+    /**
+     * Builds the category list model shown in the budget dialog.
+     *
+     * @return list model with all configurable categories
+     */
+    private DefaultListModel<String> createCategoryListModel() {
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        listModel.addElement("Housing");
+        listModel.addElement("Food");
+        listModel.addElement("Entertainment");
+        listModel.addElement("Transportation");
+        listModel.addElement("Utilities");
+        listModel.addElement("Savings");
+        listModel.addElement("Personal_Care");
+        listModel.addElement("Miscellaneous");
+        listModel.addElement("Electronics");
+        listModel.addElement("Clothes");
+        return listModel;
+    }
+
+    /**
+     * Parses and validates positive budget input text.
+     *
+     * @param amountText raw user input
+     * @return parsed amount when valid; otherwise {@code null}
+     */
+    private BigDecimal parsePositiveAmount(String amountText) {
+        if (amountText == null || amountText.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            BigDecimal parsed = new BigDecimal(amountText.trim());
+            return parsed.compareTo(BigDecimal.ZERO) > 0 ? parsed : null;
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Shows a validation message in the budget dialog.
+     *
+     * @param message message text to display
+     */
+    private void showValidationMessage(String message) {
+        JOptionPane.showMessageDialog(catalog, message);
+    }
+
+    /**
+     * Creates one budget summary card for the given category values.
+     *
+     * @param category category being rendered
+     * @param limit configured budget limit
+     * @param spent total spent amount
+     * @param remaining remaining budget amount
+     * @return configured budget summary card
+     */
+    private JPanel createBudgetCard(Category category, BigDecimal limit, BigDecimal spent, BigDecimal remaining) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.setBackground(BG_CARD);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(210, 210, 210), 1),
+                new EmptyBorder(8, 10, 8, 10)));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));
+        card.setPreferredSize(new Dimension(0, 110));
+
+        JLabel categoryLabel = new JLabel(category.name().replace('_', ' '));
+        categoryLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        categoryLabel.setForeground(TEXT_PRIMARY);
+        categoryLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel limitLabel = new JLabel("Limit: $" + limit);
+        limitLabel.setForeground(TEXT_SECONDARY);
+        limitLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel spentLabel = new JLabel("Spent: $" + spent);
+        spentLabel.setForeground(TEXT_SECONDARY);
+        spentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel remainingLabel = new JLabel("Remaining: $" + remaining);
+        remainingLabel.setForeground(TEXT_SECONDARY);
+        remainingLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        card.add(categoryLabel);
+        card.add(Box.createVerticalStrut(4));
+        card.add(limitLabel);
+        card.add(spentLabel);
+        card.add(remainingLabel);
+        return card;
     }
 
 }
