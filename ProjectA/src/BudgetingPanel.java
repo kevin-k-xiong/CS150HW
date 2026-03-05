@@ -22,21 +22,28 @@ public class BudgetingPanel extends JPanel {
     // Button in popup that confirms category + amount input.
     private JButton selectBtn;
 
+    // Panel used to display all budgets
+    private JPanel budgetDisplayPanel;
+
     // Text field where user types the budget amount.
     private JTextField amount;
 
     // Small panel that groups the "Budget" label and amount text field.
     private JPanel amountInput;
 
+    BudgetingManager bManager = new BudgetingManager();
+
     public BudgetingPanel() {
         setLayout(new BorderLayout()); // Control layout
         budgetingTopPanel();
+        budgetingLowerPanel();
+
     }
 
     /**
      * Creates the modify button
      */
-    public void budgetingTopPanel() {
+    private void budgetingTopPanel() {
         tPanel = new JPanel();
         tPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         changeBtn = new JButton("Add/Modify Budget");
@@ -49,14 +56,41 @@ public class BudgetingPanel extends JPanel {
 
     }
 
+    private void budgetingLowerPanel() {
+        budgetDisplayPanel = new JPanel();
+        budgetDisplayPanel.setLayout(new BoxLayout(budgetDisplayPanel, BoxLayout.Y_AXIS));
+
+        JScrollPane displayScroll = new JScrollPane(budgetDisplayPanel);
+        displayBudget();
+        add(displayScroll, BorderLayout.CENTER); // lower/main area of BudgetingPanel
+    }
+
     public void displayBudget() {
-        // Intended place to render saved budgets in the main panel.
+        budgetDisplayPanel.removeAll();
+
+        JLabel title = new JLabel("Budget Summary");
+        title.setFont(new Font("SansSerif", Font.BOLD, 24));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT); // or RIGHT_ALIGNMENT
+        budgetDisplayPanel.add(title);
+        budgetDisplayPanel.add(Box.createVerticalStrut(8));
+
+        // Placeholder rows for now
+        JLabel row1 = new JLabel("Test1");
+        row1.setAlignmentX(Component.LEFT_ALIGNMENT);
+        budgetDisplayPanel.add(row1);
+
+        JLabel row2 = new JLabel("Test2");
+        row2.setAlignmentX(Component.LEFT_ALIGNMENT);
+        budgetDisplayPanel.add(row2);
+
+        budgetDisplayPanel.revalidate();
+        budgetDisplayPanel.repaint();
     }
 
     /**
      * Shows the window to modify the budget categories
      */
-    public void addOrModify() {
+    private void addOrModify() {
         Window mainFrame = SwingUtilities.getWindowAncestor(this);
         catalog = new JDialog(mainFrame, "Choose a Catagory", Dialog.ModalityType.APPLICATION_MODAL);
         catalog.setLayout(new BorderLayout());
@@ -98,7 +132,7 @@ public class BudgetingPanel extends JPanel {
     }
 
     // Get it so the select buttn actually chooses the selection.
-    public void addSelectBtn() {
+    private void addSelectBtn() {
         selectBtn = new JButton("Select");
 
         selectBtn.addActionListener(e -> {
@@ -126,7 +160,8 @@ public class BudgetingPanel extends JPanel {
      * @param selectedCategory category chosen in the list
      * @param amountText       text entered for budget amount
      */
-    public void checkIfValid(String selectedCategory, String amountText) {
+    private void checkIfValid(String selectedCategory, String amountText) {
+
         // True only if user selected a category.
         boolean hasCategory = selectedCategory != null;
 
@@ -156,15 +191,33 @@ public class BudgetingPanel extends JPanel {
             }
         }
 
+        validaterCont(selectedCategory, amountText, hasCategory, hasText, isNumeric, isNonNegative);
+
+    }
+
+    private void validaterCont(String selectedCategory, String amountText, boolean hasCategory, boolean hasText,
+            boolean isNumeric, boolean isNonNegative) {
+
         boolean isValid = hasCategory && hasText && isNumeric && isNonNegative;
 
         // Close dialog only when all validation checks pass.
         if (isValid) {
+
+            // Stores the value when valid
+            selectedCategory = budgetItems.getSelectedValue();
+
+            // Stores the value when valid
+            BigDecimal amountValue = new BigDecimal(amountText.trim());
+            Category enumCategory = bManager.toCategory(selectedCategory);
+            bManager.setBudget(enumCategory, amountValue);
+
+            // Closes the panel
             catalog.dispose();
         }
+
     }
 
-    public void enterBudget() {
+    private void enterBudget() {
         // Row at top of popup for budget amount input.
         amountInput = new JPanel(new FlowLayout(FlowLayout.LEFT));
         amountInput.add(new JLabel("Enter a Budget"));
