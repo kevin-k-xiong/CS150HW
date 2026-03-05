@@ -1,9 +1,13 @@
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import javax.swing.*;
 
 public class BudgetingManager {
+
+    private JLabel popUp;
 
     private final EnumMap<Category, BigDecimal> budgets;
 
@@ -16,9 +20,15 @@ public class BudgetingManager {
     }
 
     public void setBudget(Category category, BigDecimal amount) {
-        if (category == null || amount == null || amount < 0) {
 
-        }
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
+
+        budgets.put(category, amount);
+
+    }
+
+    public void popUpNotif() {
+        popUp = new JLabel("Please enter an amount.");
 
     }
 

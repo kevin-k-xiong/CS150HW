@@ -8,7 +8,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         setTitle("Budget App");
-        setSize(400, 300);
+        setSize(720, 1280);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
