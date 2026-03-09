@@ -41,6 +41,7 @@ public class BudgetingPanel extends JPanel {
     private JPanel amountInput;
 
     private final BudgetingManager bManager;
+    private final BudgetController budgetController;
 
     /**
      * Creates a budgeting panel with its own manager instance.
@@ -56,6 +57,7 @@ public class BudgetingPanel extends JPanel {
      */
     public BudgetingPanel(BudgetingManager budgetingManager) {
         this.bManager = budgetingManager;
+        this.budgetController = new BudgetController(budgetingManager);
         setLayout(new BorderLayout()); // Control layout
         setBackground(BG_MAIN);
         budgetingTopPanel();
@@ -190,9 +192,13 @@ public class BudgetingPanel extends JPanel {
             // Current text typed in amount field
             String amountText = amount.getText().trim();
 
-            checkIfValid(selectedCategory, amountText);
-
-            // TODO: use selectedCategory (save/update budget, etc.)
+            String validationError = budgetController.applyBudget(selectedCategory, amountText);
+            if (validationError != null) {
+                showValidationMessage(validationError);
+                return;
+            }
+            displayBudget();
+            catalog.dispose();
         });
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -200,39 +206,6 @@ public class BudgetingPanel extends JPanel {
         bottomPanel.add(selectBtn);
 
         catalog.add(bottomPanel, BorderLayout.SOUTH);
-    }
-
-    /**
-     * Validates the user's category selection and amount input.
-     *
-     * @param selectedCategory category chosen in the list
-     * @param amountText       text entered for budget amount
-     */
-    private void checkIfValid(String selectedCategory, String amountText) {
-        BigDecimal amountValue = parsePositiveAmount(amountText);
-        validaterCont(selectedCategory, amountValue);
-    }
-
-    /**
-     * Finalizes budget save when validation succeeds.
-     *
-     * @param selectedCategory selected category text
-     * @param amountValue parsed amount, or {@code null} when invalid
-     */
-    private void validaterCont(String selectedCategory, BigDecimal amountValue) {
-        if (selectedCategory == null) {
-            showValidationMessage("Select a category.");
-            return;
-        }
-        if (amountValue == null) {
-            showValidationMessage("Enter a valid amount greater than 0.");
-            return;
-        }
-
-        Category enumCategory = bManager.toCategory(selectedCategory);
-        bManager.setBudget(enumCategory, amountValue);
-        displayBudget();
-        catalog.dispose();
     }
 
     /**
@@ -269,24 +242,6 @@ public class BudgetingPanel extends JPanel {
         listModel.addElement("Electronics");
         listModel.addElement("Clothes");
         return listModel;
-    }
-
-    /**
-     * Parses and validates positive budget input text.
-     *
-     * @param amountText raw user input
-     * @return parsed amount when valid; otherwise {@code null}
-     */
-    private BigDecimal parsePositiveAmount(String amountText) {
-        if (amountText == null || amountText.trim().isEmpty()) {
-            return null;
-        }
-        try {
-            BigDecimal parsed = new BigDecimal(amountText.trim());
-            return parsed.compareTo(BigDecimal.ZERO) > 0 ? parsed : null;
-        } catch (NumberFormatException ex) {
-            return null;
-        }
     }
 
     /**

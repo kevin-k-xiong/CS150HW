@@ -15,6 +15,7 @@ public class SpendingPanel extends JPanel {
     private JButton spendBtn;
     private JDialog budgets;
     private final TransactionManager transactionManager;
+    private final SpendingController spendingController;
     private final Runnable onTransactionSaved;
     private JPanel pieChartPanel;
     private JPanel transactionListPanel;
@@ -44,6 +45,7 @@ public class SpendingPanel extends JPanel {
      */
     public SpendingPanel(TransactionManager transactionManager, Runnable onTransactionSaved) {
         this.transactionManager = transactionManager;
+        this.spendingController = new SpendingController(transactionManager);
         this.onTransactionSaved = onTransactionSaved;
         setLayout(new BorderLayout());
         setBackground(BG_MAIN);
@@ -134,48 +136,22 @@ public class SpendingPanel extends JPanel {
     }
 
     /**
-     * Persists one transaction and refreshes dependent UI sections.
-     *
-     * @param category transaction category
-     * @param amount validated transaction amount
-     */
-    private void saveTransaction(Category category, BigDecimal amount) {
-        transactionManager.recordTransaction(category, amount);
-        refreshDisplay();
-        if (onTransactionSaved != null) {
-            onTransactionSaved.run();
-        }
-    }
-
-    /**
-     * Converts dialog category text to enum value.
-     *
-     * @param selectedCategory selected category text
-     * @return matching enum value
-     */
-    private Category toCategory(String selectedCategory) {
-        return Category.valueOf(selectedCategory);
-    }
-
-    /**
      * Validates user input and saves a transaction when valid.
      *
      * @param selectedCategory selected category text
      * @param amountText raw amount text
      */
     private void submitTransaction(String selectedCategory, String amountText) {
-        if (selectedCategory == null) {
-            showValidationMessage("Select a category.");
+        String validationError = spendingController.recordTransaction(selectedCategory, amountText);
+        if (validationError != null) {
+            showValidationMessage(validationError);
             return;
         }
 
-        BigDecimal amountValue = parseNonNegativeAmount(amountText);
-        if (amountValue == null) {
-            showValidationMessage("Enter a valid non-negative amount.");
-            return;
+        refreshDisplay();
+        if (onTransactionSaved != null) {
+            onTransactionSaved.run();
         }
-
-        saveTransaction(toCategory(selectedCategory), amountValue);
         budgets.dispose();
     }
 
@@ -223,24 +199,6 @@ public class SpendingPanel extends JPanel {
             listModel.addElement(category.name());
         }
         return listModel;
-    }
-
-    /**
-     * Parses and validates non-negative amount text.
-     *
-     * @param amountText raw amount text
-     * @return parsed amount when valid; otherwise {@code null}
-     */
-    private BigDecimal parseNonNegativeAmount(String amountText) {
-        if (amountText == null || amountText.trim().isEmpty()) {
-            return null;
-        }
-        try {
-            BigDecimal parsed = new BigDecimal(amountText.trim());
-            return parsed.compareTo(BigDecimal.ZERO) >= 0 ? parsed : null;
-        } catch (NumberFormatException ex) {
-            return null;
-        }
     }
 
     /**
