@@ -1,67 +1,110 @@
 public class BSTNode {
 
-    private int rightChild;
-    private int leftChild;
+    private BSTNode rightChild;
+    private BSTNode leftChild;
     private String data;
 
+    /**
+     * Creates a node that stores the given string.
+     *
+     * @param data the string stored in the node
+     */
     public BSTNode(String data) {
         this.data = data;
     }
 
-    public int getRightChild() {
+    /**
+     *
+     * @return the right child
+     */
+    public BSTNode getRightChild() {
         return rightChild;
     }
 
-    public void setRightChild(int rightChild) {
+    /**
+     * Sets the right child of this node.
+     *
+     * @param rightChild the node to store as the right child
+     */
+    public void setRightChild(BSTNode rightChild) {
         this.rightChild = rightChild;
     }
 
-    public int getLeftChild() {
+    /**
+     *
+     * @return the left child
+     */
+    public BSTNode getLeftChild() {
         return leftChild;
     }
 
-    public void setLeftChild(int leftChild) {
+    /**
+     * Sets the left child of this node.
+     *
+     * @param leftChild the node to store as the left child
+     */
+    public void setLeftChild(BSTNode leftChild) {
         this.leftChild = leftChild;
     }
 
+    /**
+     *
+     * @return the node data
+     */
     public String getData() {
         return data;
     }
 
+    /**
+     * Updates the string stored in this node.
+     *
+     * @param data the new string value
+     */
     public void setData(String data) {
         this.data = data;
     }
 
+    /**
+     *
+     * @return the subtree height
+     */
     public int height() {
-        if (this.getLeftChild() == null && this.getRightChild() == null) {
-            return 1;
-        }
-        if (this.getLeftChild() == null) {
-            return 1 + this.getRightChild().height() + 1;
-        }
-        if (this.getRightChild() == null) {
-            return 1 + this.getLeftChild().height() + 1;
-        }
-        return Math.max(this.getLeftChild().height(), this.getRightChild().height()) + 1;
+        int leftHeight = (leftChild == null) ? 0 : leftChild.height();
+        int rightHeight = (rightChild == null) ? 0 : rightChild.height();
+        return Math.max(leftHeight, rightHeight) + 1;
     }
 
-    public void insert(BSTNode node) {
-        // figure out if lef tor tight
-        // if BStNode data is less than this.data, then go left, else go right
-        // if left/right tempty put bst node there
-        //
-
-        // If there already exists a node there, then call exisitngNode.insert(bstNide)
-
+    /**
+     * Inserts a string into the subtree at this node.
+     *
+     * @param s the string to insert
+     */
+    public void insert(String s) {
+        if (s.compareTo(data) < 0) {
+            if (leftChild == null) {
+                leftChild = new BSTNode(s);
+            } else {
+                leftChild.insert(s);
+            }
+        } else {
+            if (rightChild == null) {
+                rightChild = new BSTNode(s);
+            } else {
+                rightChild.insert(s);
+            }
+        }
     }
 
-    public void printdepthFirstSearch() {
-        System.out.println(this.getData());
-        if (this.getLeftChild() != null) {
-            this.getLeftChild().printdepthFirstSearch();
+    /**
+     * Prints the subtree at this node in depth-first order.
+     */
+    public void printDepthFirstSearch() {
+        System.out.println(data);
+        if (leftChild != null) {
+            leftChild.printDepthFirstSearch();
         }
-        if (this.getRightChild() != null) {
-            this.getRightChild().printdepthFirstSearch();
+        if (rightChild != null) {
+            rightChild.printDepthFirstSearch();
         }
     }
 }

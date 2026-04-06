@@ -3,27 +3,20 @@ import java.util.LinkedList;
 public class ClassWork {
     public static void main(String[] args) {
         LinkedList<String> list = new LinkedList<>();
-        for (int i = 0; i < list.size(); i++) {
-            BSTNode node = new BSTNode(list.get(i));
-        }
+        list.add("mango");
+        list.add("apple");
+        list.add("pear");
+        list.add("banana");
+
+        BST tree = buildTree(list);
+        tree.printDepthFirst();
     }
 
-    public void listHelper(LinkedList<String> list) {
-
-        if(this.getRightChild() != null){
-
+    public static BST buildTree(LinkedList<String> list) {
+        BST tree = new BST();
+        for (String value : list) {
+            tree.insert(value);
         }
-
+        return tree;
     }
-
-    public void printdepthFirstSearch() {
-        System.out.println(this.getData());
-        if (this.getLeftChild() != null) {
-            this.getLeftChild().printdepthFirstSearch();
-        }
-        if (this.getRightChild() != null) {
-            this.getRightChild().printdepthFirstSearch();
-        }
-    }
-
 }
