@@ -32,16 +32,11 @@ class ChileanGradeAssigner:
         :param exams_score: The score of a student on all exams. Usually ranges from 0 to 100.
         :return: The final score of a student, usually ranging from 0 to 100.
         """
-        final_score = (homework_score * self.homework_weight) + (quizzes_score * self.quizzes_weight) + (exams_score * self.exams_weight)
-
         category_weights = [self.homework_weight, self.quizzes_weight, self.exams_weight]
         scores = [homework_score, quizzes_score, exams_score]
-        """
         final_score = 0
         for score, weight in zip(scores, category_weights):
             final_score += score * weight
-        """
-        final_score =[score * weight for score, weight in zip(scores, category_weights)]
 
         return final_score
 
@@ -78,7 +73,7 @@ class ChileanGradeAssigner:
       #  print(students_table)
 
         for (name, hw, qiz, ex) in students_table:
-            score: float = self.get_final_score
+            score: float = self.get_final_score(hw, qiz, ex)
             grade: str = self.get_final_grade(score)
 
             print(name, round(score), grade, sep="\t")
@@ -100,7 +95,7 @@ class ChileanGradeAssigner:
         Prints the header requested to the console.
         :return: Nothing.
         """
-        pass
+        print("Name", "Score", "Grade", sep="\t")
 
 
 # Student Data

@@ -3,60 +3,64 @@ import org.junit.jupiter.api.Test;
 
 public class BankAccountTest {
 
+    // -------- Constructor tests --------
     @Test
-    void testInitialBalance() {
-        BankAccount acc = new BankAccount(100.0);
-        assertEquals(100.0, acc.getBalance(), 0.0001);
+    void constructor_setsInitialBalance() {
+        BankAccount account = new BankAccount(100.0);
+        assertEquals(100.0, account.getBalance());
     }
 
+    // Edge case: negative initial balance (allowed by current implementation)
     @Test
-    void testDepositNormal() {
-        BankAccount acc = new BankAccount(50.0);
-        acc.deposit(25.0);
-        assertEquals(75.0, acc.getBalance(), 0.0001);
+    void constructor_allowsNegativeInitialBalance_edgeCase() {
+        BankAccount account = new BankAccount(-50.0);
+        assertEquals(-50.0, account.getBalance());
     }
 
+    // -------- deposit tests --------
     @Test
-    void testDepositZeroEdgeCase() {
-        BankAccount acc = new BankAccount(50.0);
-        acc.deposit(0.0);
-        assertEquals(50.0, acc.getBalance(), 0.0001);
+    void deposit_increasesBalance() {
+        BankAccount account = new BankAccount(100.0);
+        account.deposit(25.0);
+        assertEquals(125.0, account.getBalance());
     }
 
+    // Edge case: depositing zero should not change balance
     @Test
-    void testWithdrawNormal() {
-        BankAccount acc = new BankAccount(100.0);
-        acc.withdraw(40.0);
-        assertEquals(60.0, acc.getBalance(), 0.0001);
+    void deposit_zeroAmount_edgeCase() {
+        BankAccount account = new BankAccount(100.0);
+        account.deposit(0.0);
+        assertEquals(100.0, account.getBalance());
     }
 
+    // -------- withdraw tests --------
     @Test
-    void testWithdrawMoreThanBalanceEdgeCase() {
-        BankAccount acc = new BankAccount(50.0);
-        acc.withdraw(100.0);
-        assertEquals(-50.0, acc.getBalance(), 0.0001);
+    void withdraw_decreasesBalance() {
+        BankAccount account = new BankAccount(100.0);
+        account.withdraw(30.0);
+        assertEquals(70.0, account.getBalance());
     }
 
+    // Edge case: withdrawing more than balance (overdraft allowed in current
+    // design)
     @Test
-    void testNegativeDepositEdgeCase() {
-        BankAccount acc = new BankAccount(100.0);
-        acc.deposit(-20.0);
-        assertEquals(80.0, acc.getBalance(), 0.0001);
+    void withdraw_overdraft_edgeCase() {
+        BankAccount account = new BankAccount(50.0);
+        account.withdraw(100.0);
+        assertEquals(-50.0, account.getBalance());
     }
 
+    // -------- getBalance tests --------
     @Test
-    void testNegativeWithdrawEdgeCase() {
-        BankAccount acc = new BankAccount(100.0);
-        acc.withdraw(-30.0);
-        assertEquals(130.0, acc.getBalance(), 0.0001);
+    void getBalance_returnsCurrentBalance() {
+        BankAccount account = new BankAccount(200.0);
+        assertEquals(200.0, account.getBalance());
     }
 
+    // Edge case: balance is zero
     @Test
-    void testMultipleOperations() {
-        BankAccount acc = new BankAccount(0.0);
-        acc.deposit(10.0);
-        acc.withdraw(4.0);
-        acc.deposit(2.0);
-        assertEquals(8.0, acc.getBalance(), 0.0001);
+    void getBalance_zeroBalance_edgeCase() {
+        BankAccount account = new BankAccount(0.0);
+        assertEquals(0.0, account.getBalance());
     }
 }
